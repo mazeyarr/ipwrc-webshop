@@ -1,0 +1,72 @@
+package webshop.filter;
+
+import org.hibernate.Session;
+import webshop.core.providers.TokenProvider;
+import webshop.core.service.CoreService;
+import webshop.core.service.ExceptionService;
+import webshop.filter.bindings.AuthBinding;
+import webshop.module.User.exception.UserNotFoundException;
+import webshop.module.User.service.AuthUserService;
+import webshop.module.User.service.UserService;
+import webshop.core.iinterface.Translator;
+
+import javax.annotation.Priority;
+import javax.ws.rs.Priorities;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.Provider;
+
+/**
+ * Authentication Filter that prevents users to use resources that they are not permitted for
+ *
+ * @author Mazeyar Rezaei
+ * @since 17-10-2019
+ */
+@Provider
+@AuthBinding
+@Priority(Priorities.AUTHENTICATION)
+public class AuthTokenFilter implements ContainerRequestFilter {
+
+    @Override
+    public void filter(ContainerRequestContext context) {
+        TokenProvider tokenProvider = TokenProvider.getInstance();
+
+        // Check if the user gave a Authorization key in the header
+        if (!context.getHeaders().containsKey("Authorization")) {
+            ExceptionService.throwIlIllegalArgumentException(
+                this.getClass(),
+                Translator.translate("Authorization Failed: Token not provided"),
+                Translator.translate("Authorization key not provided"),
+                Response.Status.BAD_REQUEST
+            );
+        }
+
+        String token = context.getHeaders().getFirst("Authorization");
+
+        // Check if the token is not empty
+        if (token.equals("")) {
+            ExceptionService.throwIlIllegalArgumentException(
+                this.getClass(),
+                Translator.translate("Authorization Failed: Token was empty"),
+                Translator.translate("Token was empty in the Authorization header key"),
+                Response.Status.BAD_REQUEST
+            );
+        }
+
+        // Validate the token
+        if (!tokenProvider.verifyToken(token)) {
+            ExceptionService.throwIlIllegalArgumentException(
+                this.getClass(),
+                Translator.translate("Invalid token!"),
+                Translator.translate("Token verification failed!"),
+                Response.Status.UNAUTHORIZED
+            );
+        }
+
+        AuthUserService.getInstance().setAuthUserId(
+                tokenProvider.getDecodedJWT(token)
+                        .getClaim(TokenProvider.CLAIM_USER_ID_KEY).asLong()
+        );
+    }
+}
