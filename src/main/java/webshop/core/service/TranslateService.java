@@ -3,6 +3,8 @@ package webshop.core.service;
 import com.amazonaws.services.translate.model.TranslateTextRequest;
 import com.amazonaws.services.translate.model.TranslateTextResult;
 import webshop.core.service.Amazon.AmazonTranslationService;
+import webshop.module.User.service.AuthService;
+import webshop.module.User.service.AuthUserService;
 import webshop.type.LanguageCodeType;
 
 public class TranslateService {
@@ -16,7 +18,10 @@ public class TranslateService {
     }
 
     public String translate(String text) {
-        return this.setText(text).translateRequest(LanguageCodeType.en, LanguageCodeType.nl);
+        return this.setText(text).translateRequest(
+                LanguageCodeType.en,
+                AuthUserService.getInstance().getUserLocale()
+        );
     }
 
     public String translate(String text, LanguageCodeType from, LanguageCodeType to) {
@@ -38,6 +43,10 @@ public class TranslateService {
     private String translateRequest(LanguageCodeType sourceLanguageCode,
                                     LanguageCodeType targetLanguageCode) {
         if (!CoreService.isTranslationServiceOn()) {
+            return this.getText();
+        }
+
+        if (sourceLanguageCode == targetLanguageCode) {
             return this.getText();
         }
 

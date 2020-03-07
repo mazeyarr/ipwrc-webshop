@@ -29,17 +29,21 @@ public class AuthService {
     public static User loginWithToken(String token) throws InvalidTokenException, UserNotFoundException {
         TokenProvider tokenProvider = TokenProvider.getInstance();
 
-        if (tokenProvider.verifyToken(token)) {
-            throw new InvalidTokenException(TranslateService.getInstance().translate(
-                    "Token was invalid!"
-            ));
+        if (!tokenProvider.verifyToken(token)) {
+            throw new InvalidTokenException(Translator.translate("Token was invalid!"));
         }
 
-        return UserService.findOrFailUserById(
+        User authUser = UserService.findOrFailUserById(
                 tokenProvider.getDecodedJWT(token)
                         .getClaim(TokenProvider.CLAIM_USER_ID_KEY)
                         .asLong()
         );
+
+        authUser.setToken(token);
+
+        AuthUserService.getInstance().setAuthUser(authUser);
+
+        return authUser;
     }
 
     private static void validateOrFailUserByPassword(String givenPassword,

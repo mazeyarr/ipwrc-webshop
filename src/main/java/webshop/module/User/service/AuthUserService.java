@@ -1,6 +1,7 @@
 package webshop.module.User.service;
 
 import webshop.module.User.model.User;
+import webshop.type.AcceptedLanguageCodeType;
 import webshop.type.LanguageCodeType;
 
 public class AuthUserService {
@@ -42,6 +43,10 @@ public class AuthUserService {
 
     public void setUserLocale(LanguageCodeType userLocale) {
         this.userLocale = userLocale;
+    }
+
+    public void setUserLocale(AcceptedLanguageCodeType userLocale) {
+        this.userLocale = LanguageCodeType.valueOf(userLocale.acceptedLanguage);
     }
 
     private void setUserIfNotSetAndCanBeSet() {

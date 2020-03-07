@@ -1,14 +1,10 @@
 package webshop.filter;
 
-import org.hibernate.Session;
+import webshop.core.iinterface.Translator;
 import webshop.core.providers.TokenProvider;
-import webshop.core.service.CoreService;
 import webshop.core.service.ExceptionService;
 import webshop.filter.bindings.AuthBinding;
-import webshop.module.User.exception.UserNotFoundException;
 import webshop.module.User.service.AuthUserService;
-import webshop.module.User.service.UserService;
-import webshop.core.iinterface.Translator;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
