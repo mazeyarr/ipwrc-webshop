@@ -4,9 +4,11 @@ import webshop.core.exception.EntityNotFoundException;
 import webshop.core.iinterface.Translator;
 import webshop.core.service.TranslateService;
 import webshop.module.User.UserModule;
+import webshop.module.User.dao.CompanyDao;
 import webshop.module.User.dao.UserDao;
 import webshop.module.User.dao.UserRoleDao;
 import webshop.module.User.exception.UserNotFoundException;
+import webshop.module.User.model.Company;
 import webshop.module.User.model.User;
 import webshop.module.User.model.UserRole;
 import webshop.module.User.type.UserType;
@@ -29,12 +31,26 @@ public class UserService {
         return user;
     }
 
+    public static Company createCompany(Company company) {
+        getCompanyDao().create(company);
+
+        return company;
+    }
+
     public static List<User> getAllUsers() {
-        return getDao().all();
+        return getDao().all(User.class);
+    }
+
+    public static List<Company> getAllCompanies() {
+        return getCompanyDao().all(Company.class);
     }
 
     public static User findUserById(long id) {
         return getDao().find(id);
+    }
+
+    public static Company findCompanyById(long id) {
+        return getCompanyDao().find(id);
     }
 
     public static User findOrFailUserById(long id) throws UserNotFoundException {
@@ -55,8 +71,30 @@ public class UserService {
         }
     }
 
+    public static Company findOrFailCompanyById(long id) throws UserNotFoundException {
+        final String COMPANY_NOT_FOUND_MESSAGE = Translator.translate(
+                "User id: " + id + " not found"
+        );
+
+        try {
+            Company company = findCompanyById(id);
+
+            if (company == null) {
+                throw new UserNotFoundException(COMPANY_NOT_FOUND_MESSAGE);
+            }
+
+            return company;
+        } catch (Exception e) {
+            throw new UserNotFoundException(COMPANY_NOT_FOUND_MESSAGE);
+        }
+    }
+
     public static User findUserByUsername(String username) {
         return getDao().find(username);
+    }
+
+    public static Company findCompanyByUsername(String username) {
+        return getCompanyDao().find(username);
     }
 
     public static User findOrFailUserByUsername(String username) throws UserNotFoundException {
@@ -69,6 +107,16 @@ public class UserService {
         }
     }
 
+    public static Company findOrFailCompanyByUsername(String username) throws UserNotFoundException {
+        try {
+            return getCompanyDao().find(username);
+        } catch (Exception exception) {
+            throw new UserNotFoundException(Translator.translate(
+                    "Company with username: " + username + " does not exist"
+            ));
+        }
+    }
+
     public static User updateUser(User user) throws UserNotFoundException {
         User oldUser = findOrFailUserById(user.getId());
 
@@ -76,6 +124,14 @@ public class UserService {
         user.setPassword(oldUser.getPassword());
 
         return getDao().update(user);
+    }
+
+    public static Company updateCompany(Company company) throws UserNotFoundException {
+        User oldCompany = findOrFailUserById(company.getId());
+
+        company.setPassword(oldCompany.getPassword());
+
+        return getCompanyDao().update(company);
     }
 
     public static boolean deleteUserById(long id) throws UserNotFoundException {
@@ -92,8 +148,26 @@ public class UserService {
         return false;
     }
 
+    public static boolean deleteCompanyById(long id) throws UserNotFoundException {
+        Company companyToDelete = findOrFailCompanyById(id);
+
+        getCompanyDao().delete(companyToDelete);
+
+        try {
+            findCompanyById(id);
+        } catch (Exception e) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static void deleteUser(User user) {
         getDao().delete(user);
+    }
+
+    public static void deleteCompany(Company company) {
+        getCompanyDao().delete(company);
     }
 
     private static Set<UserRole> createRoleSetFrom(List<UserRole> roles) {
@@ -112,6 +186,10 @@ public class UserService {
 
     private static UserDao getDao() {
         return UserModule.getInstance().getDao();
+    }
+
+    private static CompanyDao getCompanyDao() {
+        return UserModule.getInstance().getCompanyDao();
     }
 
     private static UserRoleDao getUserRoleDao() {

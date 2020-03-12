@@ -47,6 +47,10 @@ public class CoreService {
         ProductModule.getInstance().init(environment);
     }
 
+    public void runSeeders() {
+        UserModule.getInstance().runSeeds();
+    }
+
     public List<Class<?>> getListOfModuleEntities() {
         List<Class<?>> listOfAllEntities = new ArrayList<>();
 

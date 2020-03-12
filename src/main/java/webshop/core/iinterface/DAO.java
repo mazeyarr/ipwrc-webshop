@@ -19,7 +19,21 @@ public abstract class DAO<Entity extends MyEntity> extends AbstractDAO<Entity> {
     }
 
     public Entity create(Entity entity) {
-        return persist(entity);
+        Transaction transaction = null;
+
+        try (Session session = currentSession().getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+
+            entity = persist(entity);
+
+            transaction.commit();
+
+            return entity;
+        } catch (Exception e) {
+            rollbackTransactionIfNotNull(transaction);
+        }
+
+        return entity;
     }
 
     public Entity find(Long id) {
@@ -39,14 +53,14 @@ public abstract class DAO<Entity extends MyEntity> extends AbstractDAO<Entity> {
         return entity;
     }
 
-    public List<User> all() {
+    public List<Entity> all(Class<Entity> c) {
         CriteriaBuilder cb = currentSession().getCriteriaBuilder();
-        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        CriteriaQuery<Entity> cq = cb.createQuery(c);
 
-        Root<User> rootEntry = cq.from(User.class);
-        CriteriaQuery<User> all = cq.select(rootEntry);
+        Root<Entity> rootEntry = cq.from(c);
+        CriteriaQuery<Entity> all = cq.select(rootEntry);
 
-        TypedQuery<User> allQuery = currentSession().createQuery(all);
+        TypedQuery<Entity> allQuery = currentSession().createQuery(all);
         return allQuery.getResultList();
     }
 

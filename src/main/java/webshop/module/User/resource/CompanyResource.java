@@ -2,14 +2,11 @@ package webshop.module.User.resource;
 
 import io.dropwizard.hibernate.UnitOfWork;
 import org.eclipse.jetty.http.HttpStatus;
+import webshop.core.iinterface.Translator;
 import webshop.core.service.ExceptionService;
 import webshop.filter.bindings.AuthBinding;
 import webshop.module.User.exception.UserNotFoundException;
-import webshop.module.User.model.User;
-import webshop.module.User.model.UserInput;
-import webshop.module.User.model.UserUpdateInput;
-import webshop.module.User.seeder.CompanyTableSeeder;
-import webshop.module.User.seeder.UserTableSeeder;
+import webshop.module.User.model.*;
 import webshop.module.User.service.UserService;
 
 import javax.ws.rs.*;
@@ -17,17 +14,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/users")
+@Path("/companies")
 @Produces(MediaType.APPLICATION_JSON)
-public class UserResource {
+public class CompanyResource {
     @GET
     @Path("/{id}")
     @UnitOfWork
     @AuthBinding
-    public Response getUserById(@PathParam("id") Long id) {
+    public Response getCompanyById(@PathParam("id") Long id) {
         try {
             return Response.status(HttpStatus.OK_200)
-                    .entity(UserService.findOrFailUserById(id))
+                    .entity(UserService.findOrFailCompanyById(id))
                     .type(MediaType.APPLICATION_JSON)
                     .build();
         } catch (UserNotFoundException e) {
@@ -39,28 +36,28 @@ public class UserResource {
     @Path("/")
     @UnitOfWork
     @AuthBinding
-    public List<User> getUserAll() {
-        return UserService.getAllUsers();
+    public List<Company> getCompanyAll() {
+        return UserService.getAllCompanies();
     }
 
     @POST
     @Path("/")
     @UnitOfWork
-    public User createUser(@BeanParam UserInput userInput) {
-        return UserService.createUser(userInput.toUser(), userInput.getRole());
+    public Company createCompany(@BeanParam CompanyInput companyInput) {
+        return UserService.createCompany(companyInput.toCompany());
     }
 
     @PUT
     @Path("/{id}")
     @UnitOfWork
     @AuthBinding
-    public Response updateUser(@PathParam("id") long id,
-                               @BeanParam UserUpdateInput userUpdateInput) {
+    public Response updateCompany(@PathParam("id") long id,
+                               @BeanParam CompanyUpdateInput companyUpdateInput) {
         try {
-            User updatedUser = UserService.updateUser(userUpdateInput.toUser());
+            Company updateCompany = UserService.updateCompany(companyUpdateInput.toCompany());
 
             return Response.status(HttpStatus.OK_200)
-                    .entity(updatedUser)
+                    .entity(updateCompany)
                     .type(MediaType.APPLICATION_JSON)
                     .build();
         } catch (UserNotFoundException userNotFoundException) {
@@ -72,31 +69,22 @@ public class UserResource {
     @Path("/{id}")
     @UnitOfWork
     @AuthBinding
-    public Response deleteUser(@PathParam("id") Long id) {
+    public Response deleteCompany(@PathParam("id") Long id) {
         try {
-            if (UserService.deleteUserById(id)) {
+            if (UserService.deleteCompanyById(id)) {
                 return Response.status(HttpStatus.OK_200)
                         .type(MediaType.APPLICATION_JSON)
                         .build();
             }
 
             return ExceptionService.toResponse(
-                    new Exception("Could not delete user!"),
+                    new Exception(Translator.translate(
+                            "Could not delete company!"
+                    )),
                     HttpStatus.BAD_REQUEST_400
             );
         } catch (UserNotFoundException userNotFoundException) {
             return ExceptionService.toResponse(userNotFoundException, HttpStatus.BAD_REQUEST_400);
         }
     }
-
-    @GET
-    @Path("/seed")
-    @UnitOfWork
-    public Response seed() {
-        new CompanyTableSeeder().run(false);
-        new UserTableSeeder().run(false);
-
-        return Response.status(HttpStatus.OK_200)
-                .type(MediaType.APPLICATION_JSON)
-                .build();    }
 }

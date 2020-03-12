@@ -1,8 +1,6 @@
 package webshop.module.User.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import webshop.core.iinterface.MyEntity;
 
 import javax.persistence.*;
@@ -32,6 +30,11 @@ public class User implements MyEntity {
     @Column(name = "password")
     @JsonIgnore
     private String password;
+
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    private Company company;
 
     @Transient
     @JsonProperty
@@ -91,6 +94,14 @@ public class User implements MyEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public Set<UserRole> getRoles() {

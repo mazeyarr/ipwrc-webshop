@@ -1,15 +1,23 @@
 package webshop.module.Product;
 
 import io.dropwizard.setup.Environment;
+import webshop.core.iinterface.CoreModule;
+import webshop.core.service.CoreService;
+import webshop.module.Product.dao.ProductDiscountsDao;
+import webshop.module.Product.dao.ProductsDao;
 import webshop.module.Product.model.Product;
-import webshop.module.User.UserModule;
-import webshop.core.iinterface.WebshopModule;
+import webshop.module.Product.model.ProductDiscount;
+import webshop.module.Product.resource.ProductResource;
 
-public class ProductModule implements WebshopModule<Object> {
-    private static volatile UserModule PRODUCT_MODULE_INSTANCE;
+public class ProductModule extends CoreModule<ProductsDao> {
+    private static volatile ProductModule PRODUCT_MODULE_INSTANCE;
+
+    private ProductsDao mProductDao;
+    private ProductDiscountsDao mProductDiscountsDao;
 
     public ProductModule() {
         mEntities.add(Product.class);
+        mEntities.add(ProductDiscount.class);
     }
 
     @Override
@@ -19,19 +27,38 @@ public class ProductModule implements WebshopModule<Object> {
 
     @Override
     public void initResources(Environment environment) {
-
+        environment.jersey().register(new ProductResource());
     }
 
     @Override
-    public Object getDao() {
-        return null;
+    public void initDao() {
+        mProductDao = new ProductsDao(
+                CoreService.getInstance()
+                        .getHibernate()
+                        .getSessionFactory()
+        );
+
+        mProductDiscountsDao = new ProductDiscountsDao(
+                CoreService.getInstance()
+                        .getHibernate()
+                        .getSessionFactory()
+        );
     }
 
-    public static UserModule getInstance() {
+    @Override
+    public ProductsDao getDao() {
+        return mProductDao;
+    }
+
+    public ProductDiscountsDao getDiscountsDao() {
+        return mProductDiscountsDao;
+    }
+
+    public static ProductModule getInstance() {
         if (PRODUCT_MODULE_INSTANCE == null) {
-            synchronized (UserModule.class) {
+            synchronized (ProductModule.class) {
                 if (PRODUCT_MODULE_INSTANCE == null) {
-                    PRODUCT_MODULE_INSTANCE = new UserModule();
+                    PRODUCT_MODULE_INSTANCE = new ProductModule();
                 }
             }
         }

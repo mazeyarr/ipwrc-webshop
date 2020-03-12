@@ -23,46 +23,74 @@ import javax.ws.rs.ext.Provider;
 @AuthBinding
 @Priority(Priorities.AUTHENTICATION)
 public class AuthTokenFilter implements ContainerRequestFilter {
+    ContainerRequestContext mContext;
+    TokenProvider tokenProvider;
+
+    String token;
 
     @Override
     public void filter(ContainerRequestContext context) {
-        TokenProvider tokenProvider = TokenProvider.getInstance();
+        this.mContext = context;
+        tokenProvider = TokenProvider.getInstance();
+        token = "";
 
-        // Check if the user gave a Authorization key in the header
-        if (!context.getHeaders().containsKey("Authorization")) {
-            ExceptionService.throwIlIllegalArgumentException(
-                this.getClass(),
-                Translator.translate("Authorization Failed: Token not provided"),
-                Translator.translate("Authorization key not provided"),
-                Response.Status.BAD_REQUEST
-            );
-        }
-
-        String token = context.getHeaders().getFirst("Authorization");
-
-        // Check if the token is not empty
-        if (token.equals("")) {
-            ExceptionService.throwIlIllegalArgumentException(
-                this.getClass(),
-                Translator.translate("Authorization Failed: Token was empty"),
-                Translator.translate("Token was empty in the Authorization header key"),
-                Response.Status.BAD_REQUEST
-            );
-        }
-
-        // Validate the token
-        if (!tokenProvider.verifyToken(token)) {
-            ExceptionService.throwIlIllegalArgumentException(
-                this.getClass(),
-                Translator.translate("Invalid token!"),
-                Translator.translate("Token verification failed!"),
-                Response.Status.UNAUTHORIZED
-            );
-        }
+        proceedIfHasAuthorizationHeader();
+        setAuthorizationTokenFromHeader();
+        proceedIfTokenIsNotEmpty(getToken());
+        proceedIfTokenIsValid(getToken());
 
         AuthUserService.getInstance().setAuthUserId(
-                tokenProvider.getDecodedJWT(token)
+                tokenProvider.getDecodedJWT(getToken())
                         .getClaim(TokenProvider.CLAIM_USER_ID_KEY).asLong()
         );
+    }
+
+    private void proceedIfHasAuthorizationHeader() {
+        if (!getContext().getHeaders().containsKey("Authorization")) {
+            ExceptionService.throwIlIllegalArgumentException(
+                    this.getClass(),
+                    Translator.translate("Authorization Failed: Token not provided"),
+                    Translator.translate("Authorization key not provided"),
+                    Response.Status.BAD_REQUEST
+            );
+        }
+    }
+
+    private void proceedIfTokenIsNotEmpty(String token) {
+        if (token.equals("")) {
+            ExceptionService.throwIlIllegalArgumentException(
+                    this.getClass(),
+                    Translator.translate("Authorization Failed: Token was empty"),
+                    Translator.translate("Token was empty in the Authorization header key"),
+                    Response.Status.BAD_REQUEST
+            );
+        }
+    }
+
+    private void proceedIfTokenIsValid(String token) {
+        if (!getTokenProvider().verifyToken(token)) {
+            ExceptionService.throwIlIllegalArgumentException(
+                    this.getClass(),
+                    Translator.translate("Invalid token!"),
+                    Translator.translate("Token verification failed!"),
+                    Response.Status.UNAUTHORIZED
+            );
+        }
+    }
+
+    private ContainerRequestContext getContext() {
+        return mContext;
+    }
+
+    private TokenProvider getTokenProvider() {
+        return tokenProvider;
+    }
+
+    private String getToken() {
+        return token;
+    }
+
+    private void setAuthorizationTokenFromHeader() {
+        this.token = getContext().getHeaders().getFirst("Authorization");
     }
 }
