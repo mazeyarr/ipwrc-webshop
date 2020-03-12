@@ -9,6 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "companies")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Company implements MyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +24,10 @@ public class Company implements MyEntity {
     private String name;
 
     @Column(name = "password")
-    @JsonProperty
+    @JsonIgnore
     private String password;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.REMOVE)
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private Set<User> employees = new HashSet<>();
 
     public Company() {

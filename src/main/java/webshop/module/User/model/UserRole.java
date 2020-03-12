@@ -1,7 +1,6 @@
 package webshop.module.User.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import webshop.core.iinterface.MyEntity;
 import webshop.module.User.type.UserType;
 
@@ -9,6 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "user_roles")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class UserRole implements MyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,12 +19,11 @@ public class UserRole implements MyEntity {
     @Column(name = "role")
     private String role;
 
-    @JsonProperty
+    @JsonIgnore
     @Column(name = "user_id")
     private long userId;
 
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 

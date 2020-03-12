@@ -53,7 +53,7 @@ public class UserTableSeeder extends CoreSeeder implements Seeder {
         );
         Faker faker = new Faker(new Locale("nl"));
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             try {
                 String email = fakeValuesService.bothify("???????#####@gmail.com");
                 Matcher emailMatcher = Pattern.compile("\\w{4}\\d{2}@gmail.com").matcher(email);
