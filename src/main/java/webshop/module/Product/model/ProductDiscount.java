@@ -1,6 +1,7 @@
 package webshop.module.Product.model;
 
 import webshop.core.iinterface.MyEntity;
+import webshop.module.Product.type.DiscountType;
 import webshop.module.User.model.User;
 
 import javax.persistence.*;
@@ -18,6 +19,13 @@ public class ProductDiscount implements MyEntity {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "type")
+    private String type;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     public ProductDiscount() {
     }
@@ -46,5 +54,21 @@ public class ProductDiscount implements MyEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public DiscountType getType() {
+        return DiscountType.valueOf(type);
+    }
+
+    public void setType(DiscountType type) {
+        this.type = type.toString();
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

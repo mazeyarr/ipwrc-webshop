@@ -1,10 +1,12 @@
 package webshop.module.Product.model;
 
 import webshop.core.iinterface.MyEntity;
+import webshop.module.User.model.Company;
 import webshop.module.User.model.User;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "products")
@@ -28,13 +30,12 @@ public class Product implements MyEntity {
     @Column(name = "due_date")
     private Date dueDate;
 
-    @ManyToOne
-    @JoinColumn(name = "product_discount_id")
-    private ProductDiscount productDiscount;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
+    private Set<ProductDiscount> productDiscounts;
 
     @ManyToOne
     @JoinColumn(name = "manufacturer_user_id")
-    private User manufacturer;
+    private Company manufacturer;
 
     @ManyToOne
     @JoinColumn(name = "created_by_user_id")
@@ -93,19 +94,19 @@ public class Product implements MyEntity {
         this.dueDate = dueDate;
     }
 
-    public ProductDiscount getProductDiscount() {
-        return productDiscount;
+    public Set<ProductDiscount> getProductDiscounts() {
+        return productDiscounts;
     }
 
-    public void setProductDiscount(ProductDiscount productDiscount) {
-        this.productDiscount = productDiscount;
+    public void setProductDiscounts(Set<ProductDiscount> productDiscounts) {
+        this.productDiscounts = productDiscounts;
     }
 
-    public User getManufacturer() {
+    public Company getManufacturer() {
         return manufacturer;
     }
 
-    public void setManufacturer(User manufacturer) {
+    public void setManufacturer(Company manufacturer) {
         this.manufacturer = manufacturer;
     }
 

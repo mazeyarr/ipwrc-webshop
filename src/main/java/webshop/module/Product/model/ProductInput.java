@@ -1,6 +1,7 @@
 package webshop.module.Product.model;
 
 import webshop.module.User.exception.UserNotFoundException;
+import webshop.module.User.model.Company;
 import webshop.module.User.model.User;
 import webshop.module.User.service.AuthUserService;
 import webshop.module.User.service.UserService;
@@ -10,6 +11,8 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ProductInput {
     @HeaderParam("Content-Type")
@@ -92,12 +95,16 @@ public class ProductInput {
         this.dueDate = dueDate;
     }
 
-    public ProductDiscount getDiscount() {
+    public Set<ProductDiscount> getDiscount() {
+        Set<ProductDiscount> discounts = new HashSet<>();
         ProductDiscount productDiscount = new ProductDiscount();
+
         productDiscount.setDiscount(discount);
         productDiscount.setDescription(getDescription());
 
-        return productDiscount;
+        discounts.add(productDiscount);
+
+        return discounts;
     }
 
     @FormParam("discount")
@@ -109,13 +116,13 @@ public class ProductInput {
         return discountDescription;
     }
 
-    @FormParam("discount-description")
+    @FormParam("discountDescription")
     public void setDiscountDescription(String description) {
         this.discountDescription = description;
     }
 
-    public User getManufacturer() throws UserNotFoundException {
-        return UserService.findOrFailUserById(manufacturerId);
+    public Company getManufacturer() throws UserNotFoundException {
+        return UserService.findOrFailCompanyById(getManufacturerId());
     }
 
     public long getManufacturerId() {
@@ -139,7 +146,7 @@ public class ProductInput {
         product.setProductType(getProductType());
         product.setPrice(getPrice());
         product.setDueDate(getDueDate());
-        product.setProductDiscount(getDiscount());
+        product.setProductDiscounts(getDiscount());
         product.setManufacturer(getManufacturer());
         product.setCreatedBy(getCreatedBy());
 

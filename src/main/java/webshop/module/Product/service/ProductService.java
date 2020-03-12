@@ -6,6 +6,7 @@ import webshop.module.Product.dao.ProductDiscountsDao;
 import webshop.module.Product.dao.ProductsDao;
 import webshop.module.Product.exception.ProductNotFoundException;
 import webshop.module.Product.model.Product;
+import webshop.module.Product.model.ProductDiscount;
 
 import java.util.List;
 
@@ -14,6 +15,12 @@ public class ProductService {
         getDao().create(product);
 
         return product;
+    }
+
+    public static ProductDiscount createProductDiscount(ProductDiscount productDiscount) {
+        getDiscountDao().create(productDiscount);
+
+        return productDiscount;
     }
 
     public static List<Product> getAllProducts() {

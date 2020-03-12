@@ -16,12 +16,13 @@ public class ProductModule extends CoreModule<ProductsDao> {
     private ProductDiscountsDao mProductDiscountsDao;
 
     public ProductModule() {
-        mEntities.add(Product.class);
-        mEntities.add(ProductDiscount.class);
+        addEntityToModule(Product.class);
+        addEntityToModule(ProductDiscount.class);
     }
 
     @Override
     public void init(Environment environment) {
+        initDao();
         initResources(environment);
     }
 

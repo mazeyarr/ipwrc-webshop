@@ -98,5 +98,6 @@ public class UserResource {
 
         return Response.status(HttpStatus.OK_200)
                 .type(MediaType.APPLICATION_JSON)
-                .build();    }
+                .build();
+    }
 }

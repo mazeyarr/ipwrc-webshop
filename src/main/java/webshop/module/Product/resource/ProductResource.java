@@ -8,8 +8,11 @@ import webshop.module.Product.exception.ProductNotFoundException;
 import webshop.module.Product.model.Product;
 import webshop.module.Product.model.ProductInput;
 import webshop.module.Product.model.ProductUpdateInput;
+import webshop.module.Product.seeder.ProductTableSeeder;
 import webshop.module.Product.service.ProductService;
 import webshop.module.User.exception.UserNotFoundException;
+import webshop.module.User.seeder.CompanyTableSeeder;
+import webshop.module.User.seeder.UserTableSeeder;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -98,5 +101,16 @@ public class ProductResource {
         } catch (ProductNotFoundException productNotFoundException) {
             return ExceptionService.toResponse(productNotFoundException, HttpStatus.BAD_REQUEST_400);
         }
+    }
+
+    @GET
+    @Path("/seed")
+    @UnitOfWork
+    public Response seed() {
+        new ProductTableSeeder().run(false);
+
+        return Response.status(HttpStatus.OK_200)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 }

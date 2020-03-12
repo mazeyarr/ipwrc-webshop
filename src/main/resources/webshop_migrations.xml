@@ -71,7 +71,6 @@
                 <constraints nullable="true" />
             </column>
 
-            <column name="product_discount_id" type="bigint" />
             <column name="manufacturer_user_id" type="bigint" />
             <column name="created_by_user_id" type="bigint" />
         </createTable>
@@ -92,6 +91,8 @@
 
             <column name="discount" type="tinyint(3)" />
             <column name="description" type="varchar(255)" />
+            <column name="type" type="varchar(255)" />
+            <column name="product_id" type="bigint" />
         </createTable>
 
     </changeSet>
