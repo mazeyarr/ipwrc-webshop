@@ -2,6 +2,7 @@ package webshop.module.Product.resource;
 
 import io.dropwizard.hibernate.UnitOfWork;
 import org.eclipse.jetty.http.HttpStatus;
+import webshop.core.iinterface.CoreValue;
 import webshop.core.service.ExceptionService;
 import webshop.filter.bindings.AuthBinding;
 import webshop.module.Product.exception.ProductNotFoundException;
@@ -10,9 +11,6 @@ import webshop.module.Product.model.ProductInput;
 import webshop.module.Product.model.ProductUpdateInput;
 import webshop.module.Product.seeder.ProductTableSeeder;
 import webshop.module.Product.service.ProductService;
-import webshop.module.User.exception.UserNotFoundException;
-import webshop.module.User.seeder.CompanyTableSeeder;
-import webshop.module.User.seeder.UserTableSeeder;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -47,40 +45,34 @@ public class ProductResource {
 
     @POST
     @Path("/")
+    @AuthBinding
     @UnitOfWork
     public Response createProduct(@BeanParam ProductInput productInput) {
-        try {
-            Product product = ProductService.createProduct(productInput.toProduct());
+        Product product = ProductService.createProduct(productInput.toProduct());
 
-            return Response.status(HttpStatus.OK_200)
-                    .entity(product)
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
-        } catch (UserNotFoundException e) {
-            return ExceptionService.toResponse(
-                    new Exception("Manufacturer was unknown!"),
-                    HttpStatus.BAD_REQUEST_400
-            );
-        }
+        return Response.status(HttpStatus.OK_200)
+                .entity(product)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 
-//    @PUT
-//    @Path("/{id}")
-//    @UnitOfWork
-//    @AuthBinding
-//    public Response updateProduct(@PathParam("id") long id,
-//                               @BeanParam ProductUpdateInput productUpdateInput) {
-//        try {
-//            Product updatedProduct = ProductService.updateProduct(productUpdateInput.toProduct());
-//
-//            return Response.status(HttpStatus.OK_200)
-//                    .entity(updatedProduct)
-//                    .type(MediaType.APPLICATION_JSON)
-//                    .build();
-//        } catch (ProductNotFoundException productNotFoundException) {
-//            return ExceptionService.toResponse(productNotFoundException, HttpStatus.BAD_REQUEST_400);
-//        }
-//    }
+    @PUT
+    @Path("/{id}")
+    @UnitOfWork
+    @AuthBinding
+    public Response updateProduct(@PathParam("id") long id,
+                               @BeanParam ProductUpdateInput productUpdateInput) {
+        try {
+            Product updatedProduct = ProductService.updateProduct(productUpdateInput.toProduct());
+
+            return Response.status(HttpStatus.OK_200)
+                    .entity(updatedProduct)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        } catch (ProductNotFoundException productNotFoundException) {
+            return ExceptionService.toResponse(productNotFoundException, HttpStatus.BAD_REQUEST_400);
+        }
+    }
 
     @DELETE
     @Path("/{id}")
@@ -107,7 +99,7 @@ public class ProductResource {
     @Path("/seed")
     @UnitOfWork
     public Response seed() {
-        new ProductTableSeeder().run(false);
+        new ProductTableSeeder().run(CoreValue.ON);
 
         return Response.status(HttpStatus.OK_200)
                 .type(MediaType.APPLICATION_JSON)

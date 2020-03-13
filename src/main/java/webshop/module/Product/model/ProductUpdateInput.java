@@ -1,16 +1,14 @@
 package webshop.module.Product.model;
 
-import webshop.module.User.exception.UserNotFoundException;
 import webshop.module.User.model.Company;
 import webshop.module.User.model.User;
 import webshop.module.User.service.AuthUserService;
 import webshop.module.User.service.UserService;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,7 +31,7 @@ public class ProductUpdateInput {
     @NotNull
     private Float price;
 
-    private Date dueDate;
+    private LocalDate dueDate;
 
     @NotNull
     private int discount;
@@ -97,12 +95,12 @@ public class ProductUpdateInput {
         this.price = price;
     }
 
-    public Date getDueDate() {
+    public LocalDate getDueDate() {
         return dueDate;
     }
 
     @FormParam("dueDate")
-    public void setDueDate(Date dueDate) {
+    public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
 
@@ -132,8 +130,8 @@ public class ProductUpdateInput {
         this.discountDescription = description;
     }
 
-    public Company getManufacturer() throws UserNotFoundException {
-        return UserService.findOrFailCompanyById(getManufacturerId());
+    public Company getManufacturer() {
+        return UserService.findCompanyById(getManufacturerId());
     }
 
     public long getManufacturerId() {
@@ -149,7 +147,7 @@ public class ProductUpdateInput {
         return AuthUserService.getInstance().getAuthUser();
     }
 
-    public Product toProduct() throws UserNotFoundException {
+    public Product toProduct() {
         Product product = new Product();
 
         product.setId(getId());

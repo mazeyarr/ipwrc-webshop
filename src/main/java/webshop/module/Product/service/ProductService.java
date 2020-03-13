@@ -1,5 +1,6 @@
 package webshop.module.Product.service;
 
+import webshop.core.iinterface.CoreValue;
 import webshop.core.iinterface.Translator;
 import webshop.module.Product.ProductModule;
 import webshop.module.Product.dao.ProductDiscountsDao;
@@ -13,6 +14,15 @@ import java.util.List;
 public class ProductService {
     public static Product createProduct(Product product) {
         getDao().create(product);
+
+        if (product.getProductDiscounts().size() > CoreValue.EMPTY) {
+            product.getProductDiscounts().forEach(productDiscount -> {
+                productDiscount.setProduct(product);
+                if (productDiscount.getId() == CoreValue.UNSET_0) {
+                    getDiscountDao().create(productDiscount);
+                }
+            });
+        }
 
         return product;
     }
@@ -39,7 +49,7 @@ public class ProductService {
         try {
             Product product = findProductById(id);
 
-            if (product == null) {
+            if (product == CoreValue.UNSET_NULL) {
                 throw new ProductNotFoundException(USER_NOT_FOUND_MESSAGE);
             }
 

@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import com.github.javafaker.service.FakeValuesService;
 import com.github.javafaker.service.RandomService;
 import webshop.core.iinterface.CoreSeeder;
+import webshop.core.iinterface.CoreValue;
 import webshop.core.iinterface.Seeder;
 import webshop.module.User.model.Company;
 import webshop.module.User.model.User;
@@ -24,7 +25,7 @@ public class CompanyTableSeeder extends CoreSeeder implements Seeder {
     @Override
     public boolean isAlreadySeeded() {
         try {
-            Company user = UserService.findCompanyById(1);
+            Company user = UserService.findCompanyById(CoreValue.FIRST_ID);
 
             return user.getEmail().equals("test@test.nl");
         } catch (Exception e) {

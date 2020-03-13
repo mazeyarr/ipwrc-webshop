@@ -2,6 +2,7 @@ package webshop.module.User.resource;
 
 import io.dropwizard.hibernate.UnitOfWork;
 import org.eclipse.jetty.http.HttpStatus;
+import webshop.core.iinterface.CoreValue;
 import webshop.core.service.ExceptionService;
 import webshop.filter.bindings.AuthBinding;
 import webshop.module.User.exception.UserNotFoundException;
@@ -93,8 +94,8 @@ public class UserResource {
     @Path("/seed")
     @UnitOfWork
     public Response seed() {
-        new CompanyTableSeeder().run(false);
-        new UserTableSeeder().run(false);
+        new CompanyTableSeeder().run(CoreValue.OFF);
+        new UserTableSeeder().run(CoreValue.OFF);
 
         return Response.status(HttpStatus.OK_200)
                 .type(MediaType.APPLICATION_JSON)

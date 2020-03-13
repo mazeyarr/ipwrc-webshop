@@ -1,5 +1,7 @@
 package webshop.module.Product.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import webshop.core.iinterface.MyEntity;
 import webshop.module.Product.type.DiscountType;
 import webshop.module.User.model.User;
@@ -9,6 +11,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "product_discounts")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class ProductDiscount implements MyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

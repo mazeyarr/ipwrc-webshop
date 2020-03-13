@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import com.github.javafaker.service.FakeValuesService;
 import com.github.javafaker.service.RandomService;
 import webshop.core.iinterface.CoreSeeder;
+import webshop.core.iinterface.CoreValue;
 import webshop.core.iinterface.Seeder;
 import webshop.module.User.model.User;
 import webshop.module.User.service.PasswordEncryptService;
@@ -19,11 +20,12 @@ import java.util.regex.Pattern;
 
 public class UserTableSeeder extends CoreSeeder implements Seeder {
     private final String SEEDER_NAME = "UserTableSeeder";
+    public static final int AMOUNT_OF_SEEDING_USERS = 1000;
 
     @Override
     public boolean isAlreadySeeded() {
         try {
-            User user = UserService.findOrFailUserById(1);
+            User user = UserService.findOrFailUserById(CoreValue.FIRST_ID);
 
             return user.getEmail().equals("mazeyarr@gmail.com");
         } catch (Exception e) {
@@ -39,6 +41,7 @@ public class UserTableSeeder extends CoreSeeder implements Seeder {
         me.setFirstName("Mazeyar");
         me.setLastName("Rezaei");
         me.setEmail("mazeyarr@gmail.com");
+        me.setCompany(UserService.findCompanyById(CoreValue.FIRST_ID));
 
         UserService.createUser(me, UserType.SUPERADMIN);
 
@@ -53,7 +56,7 @@ public class UserTableSeeder extends CoreSeeder implements Seeder {
         );
         Faker faker = new Faker(new Locale("nl"));
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < AMOUNT_OF_SEEDING_USERS; i++) {
             try {
                 String email = fakeValuesService.bothify("???????#####@gmail.com");
                 Matcher emailMatcher = Pattern.compile("\\w{4}\\d{2}@gmail.com").matcher(email);

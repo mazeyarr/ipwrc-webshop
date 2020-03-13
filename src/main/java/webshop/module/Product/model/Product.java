@@ -1,44 +1,58 @@
 package webshop.module.Product.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import webshop.core.iinterface.MyEntity;
 import webshop.module.User.model.Company;
 import webshop.module.User.model.User;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
 @Table(name = "products")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Product implements MyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty
     private long id;
 
+    @JsonProperty
     @Column(name = "name")
     private String name;
 
+    @JsonProperty
     @Column(name = "description")
     private String description;
 
+    @JsonProperty
     @Column(name = "product_type")
     private String productType;
 
+    @JsonProperty
     @Column(name = "price")
     private Float price;
 
+    @JsonIgnore
     @Column(name = "due_date")
-    private Date dueDate;
+    private LocalDate dueDate;
 
+    @JsonProperty("discounts")
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     private Set<ProductDiscount> productDiscounts;
 
+    @JsonProperty
     @ManyToOne
-    @JoinColumn(name = "manufacturer_user_id")
+    @JoinColumn(name = "manufacturer_user_id", nullable = false)
     private Company manufacturer;
 
+    @JsonProperty
     @ManyToOne
-    @JoinColumn(name = "created_by_user_id")
+    @JoinColumn(name = "created_by_user_id", nullable = false)
     private User createdBy;
 
     public Product() {
@@ -86,11 +100,16 @@ public class Product implements MyEntity {
         this.price = price;
     }
 
-    public Date getDueDate() {
+    public LocalDate getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(Date dueDate) {
+    @JsonProperty("dueDate")
+    public String getFormattedDueDate() {
+        return dueDate.toString();
+    }
+
+    public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
 

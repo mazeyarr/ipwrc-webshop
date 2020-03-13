@@ -1,16 +1,16 @@
 package webshop.module.Product.model;
 
+import webshop.module.Product.type.DiscountType;
 import webshop.module.User.exception.UserNotFoundException;
 import webshop.module.User.model.Company;
 import webshop.module.User.model.User;
 import webshop.module.User.service.AuthUserService;
 import webshop.module.User.service.UserService;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,7 +30,7 @@ public class ProductInput {
     @NotNull
     private Float price;
 
-    private Date dueDate;
+    private LocalDate dueDate;
 
     @NotNull
     private int discount;
@@ -86,13 +86,13 @@ public class ProductInput {
         this.price = price;
     }
 
-    public Date getDueDate() {
+    public LocalDate getDueDate() {
         return dueDate;
     }
 
     @FormParam("dueDate")
-    public void setDueDate(Date dueDate) {
-        this.dueDate = dueDate;
+    public void setDueDate(String dueDate) {
+        this.dueDate = LocalDate.parse(dueDate);
     }
 
     public Set<ProductDiscount> getDiscount() {
@@ -100,9 +100,13 @@ public class ProductInput {
         ProductDiscount productDiscount = new ProductDiscount();
 
         productDiscount.setDiscount(discount);
-        productDiscount.setDescription(getDescription());
+        productDiscount.setDescription(getDiscountDescription());
+        productDiscount.setType(DiscountType.PERCENTAGE);
 
-        discounts.add(productDiscount);
+        if (discount != 0) {
+            discounts.add(productDiscount);
+        }
+
 
         return discounts;
     }
@@ -138,7 +142,7 @@ public class ProductInput {
         return AuthUserService.getInstance().getAuthUser();
     }
 
-    public Product toProduct() throws UserNotFoundException {
+    public Product toProduct() {
         Product product = new Product();
 
         product.setName(getName());
@@ -147,8 +151,8 @@ public class ProductInput {
         product.setPrice(getPrice());
         product.setDueDate(getDueDate());
         product.setProductDiscounts(getDiscount());
-        product.setManufacturer(getManufacturer());
-        product.setCreatedBy(getCreatedBy());
+        product.setManufacturer(AuthUserService.getInstance().getAuthUser().getCompany());
+        product.setCreatedBy(AuthUserService.getInstance().getAuthUser());
 
         return product;
     }
