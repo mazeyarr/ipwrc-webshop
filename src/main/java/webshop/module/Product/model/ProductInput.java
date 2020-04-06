@@ -1,5 +1,6 @@
 package webshop.module.Product.model;
 
+import webshop.core.service.CoreHelper;
 import webshop.module.Product.type.DiscountType;
 import webshop.module.User.exception.UserNotFoundException;
 import webshop.module.User.model.Company;
@@ -34,6 +35,8 @@ public class ProductInput {
 
     @NotNull
     private int discount;
+
+    private DiscountType discountType;
 
     @NotNull
     private String discountDescription;
@@ -101,12 +104,11 @@ public class ProductInput {
 
         productDiscount.setDiscount(discount);
         productDiscount.setDescription(getDiscountDescription());
-        productDiscount.setType(DiscountType.PERCENTAGE);
+        productDiscount.setType(getDiscountType());
 
-        if (discount != 0) {
+        if (CoreHelper.isNotZero(discount)) {
             discounts.add(productDiscount);
         }
-
 
         return discounts;
     }
@@ -118,6 +120,19 @@ public class ProductInput {
 
     public String getDiscountDescription() {
         return discountDescription;
+    }
+
+    public DiscountType getDiscountType() {
+        return discountType;
+    }
+
+    @FormParam("discountType")
+    public void setDiscountType(String discountType) {
+        try {
+            this.discountType = DiscountType.valueOf(discountType);
+        } catch (Exception e) {
+            this.discountType = DiscountType.PERCENTAGE;
+        }
     }
 
     @FormParam("discountDescription")

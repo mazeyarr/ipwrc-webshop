@@ -7,7 +7,6 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.jdbi.v3.core.Jdbi;
 import webshop.WebshopConfiguration;
 import webshop.core.iinterface.UploadPaths;
-import webshop.core.service.Amazon.AmazonCredentials;
 import webshop.module.Product.ProductModule;
 import webshop.module.User.UserModule;
 import webshop.type.EnvironmentType;
@@ -15,7 +14,7 @@ import webshop.type.EnvironmentType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CoreService {
+public class CoreService extends CoreHelper {
     private static volatile CoreService CORE_SERVICE_INSTANCE;
 
     public static final Dotenv env = Dotenv.configure()
