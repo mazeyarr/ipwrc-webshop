@@ -9,6 +9,7 @@ import webshop.module.Tag.dao.TagsDao;
 import webshop.module.Tag.model.Tag;
 import webshop.module.Tag.resource.TagResource;
 
+// TODO: TAGS LINKING TAGS
 public class TagModule extends CoreModule<TagsDao> {
     private static volatile TagModule TAG_MODULE_INSTANCE;
 
