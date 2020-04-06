@@ -64,7 +64,17 @@ public class ProductService {
     }
 
     public static boolean deleteProductById(long id) throws ProductNotFoundException {
-        return false;
+        Product product = findOrFailProductById(id);
+
+        getDao().delete(product);
+
+        try {
+            findOrFailProductById(id);
+
+            return false;
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     public static void deleteProduct(Product product) {

@@ -1,8 +1,13 @@
 package webshop.module.Product.resource;
 
+import com.amazonaws.services.xray.model.Http;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.hibernate.UnitOfWork;
 import org.eclipse.jetty.http.HttpStatus;
 import webshop.core.iinterface.CoreValue;
+import webshop.core.iinterface.Translator;
+import webshop.core.service.CoreHelper;
 import webshop.core.service.ExceptionService;
 import webshop.filter.bindings.AuthBinding;
 import webshop.module.Product.exception.ProductNotFoundException;
@@ -15,6 +20,7 @@ import webshop.module.Product.service.ProductService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Date;
 import java.util.List;
 
 @Path("/products")
@@ -81,9 +87,16 @@ public class ProductResource {
     public Response deleteProduct(@PathParam("id") Long id) {
         try {
             if (ProductService.deleteProductById(id)) {
-                return Response.status(HttpStatus.OK_200)
-                        .type(MediaType.APPLICATION_JSON)
-                        .build();
+                ObjectMapper mapper = new ObjectMapper();
+                ObjectNode responseNode = mapper.createObjectNode();
+
+                responseNode.put("error", false);
+                responseNode.put("message", Translator.translate(
+                        "Product has been deleted"
+                ));
+                responseNode.put("time", new Date().toString());
+
+                return CoreHelper.toResponseWithNode(responseNode, HttpStatus.OK_200);
             }
 
             return ExceptionService.toResponse(
