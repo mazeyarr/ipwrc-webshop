@@ -14,6 +14,10 @@ public class CoreHelper {
         return value != ZERO;
     }
 
+    public static boolean isNull(Object o) {
+        return o == null;
+    }
+
     public static Response toEmptyResponse(int HttpStatusCode) {
         return Response.status(HttpStatusCode)
                 .type(MediaType.APPLICATION_JSON)

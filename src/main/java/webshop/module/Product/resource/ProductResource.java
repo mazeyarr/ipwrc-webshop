@@ -13,6 +13,7 @@ import webshop.filter.bindings.AuthBinding;
 import webshop.module.Product.exception.ProductNotFoundException;
 import webshop.module.Product.model.Product;
 import webshop.module.Product.model.ProductInput;
+import webshop.module.Product.model.ProductTagInput;
 import webshop.module.Product.model.ProductUpdateInput;
 import webshop.module.Product.seeder.ProductTableSeeder;
 import webshop.module.Product.service.ProductService;
@@ -66,17 +67,27 @@ public class ProductResource {
     @Path("/{id}")
     @UnitOfWork
     @AuthBinding
-    public Response updateProduct(@PathParam("id") long id,
-                               @BeanParam ProductUpdateInput productUpdateInput) {
-        try {
-            Product updatedProduct = ProductService.updateProduct(productUpdateInput.toProduct());
+    public Response updateProduct(@BeanParam ProductUpdateInput productUpdateInput) {
+        Product updatedProduct = ProductService.updateProduct(productUpdateInput.toProduct());
 
+        return Response.status(HttpStatus.OK_200)
+                .entity(updatedProduct)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    @UnitOfWork
+    @AuthBinding
+    public Response tagProduct(@PathParam("id") long id, @BeanParam ProductTagInput productTagInput) {
+        try {
             return Response.status(HttpStatus.OK_200)
-                    .entity(updatedProduct)
+                    .entity(ProductService.tagProduct(id, productTagInput.getName()))
                     .type(MediaType.APPLICATION_JSON)
                     .build();
-        } catch (ProductNotFoundException productNotFoundException) {
-            return ExceptionService.toResponse(productNotFoundException, HttpStatus.BAD_REQUEST_400);
+        } catch (Exception e) {
+            return ExceptionService.toResponse(e, HttpStatus.BAD_REQUEST_400);
         }
     }
 
@@ -86,10 +97,10 @@ public class ProductResource {
     @AuthBinding
     public Response deleteProduct(@PathParam("id") Long id) {
         try {
-            if (ProductService.deleteProductById(id)) {
-                ObjectMapper mapper = new ObjectMapper();
-                ObjectNode responseNode = mapper.createObjectNode();
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode responseNode = mapper.createObjectNode();
 
+            if (ProductService.deleteProductById(id)) {
                 responseNode.put("error", false);
                 responseNode.put("message", Translator.translate(
                         "Product has been deleted"
@@ -100,7 +111,7 @@ public class ProductResource {
             }
 
             return ExceptionService.toResponse(
-                    new Exception("Could not delete product!"),
+                    new Exception(Translator.translate("Could not delete product!")),
                     HttpStatus.BAD_REQUEST_400
             );
         } catch (ProductNotFoundException productNotFoundException) {

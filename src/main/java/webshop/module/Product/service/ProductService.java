@@ -59,14 +59,20 @@ public class ProductService {
         }
     }
 
-    public static Product updateProduct(Product product) throws ProductNotFoundException {
+    public static Product updateProduct(Product product) {
+        getDao().update(product);
+
+        return findProductById(product.getId());
+    }
+
+    public static Product tagProduct(long id, String tagName) {
         return new Product();
     }
 
     public static boolean deleteProductById(long id) throws ProductNotFoundException {
         Product product = findOrFailProductById(id);
 
-        getDao().delete(product);
+        deleteProduct(product);
 
         try {
             findOrFailProductById(id);
@@ -78,6 +84,7 @@ public class ProductService {
     }
 
     public static void deleteProduct(Product product) {
+        getDao().delete(product);
     }
 
     private static ProductsDao getDao() {

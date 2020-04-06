@@ -8,6 +8,7 @@ import org.jdbi.v3.core.Jdbi;
 import webshop.WebshopConfiguration;
 import webshop.core.iinterface.UploadPaths;
 import webshop.module.Product.ProductModule;
+import webshop.module.Tag.TagModule;
 import webshop.module.User.UserModule;
 import webshop.type.EnvironmentType;
 
@@ -44,6 +45,7 @@ public class CoreService extends CoreHelper {
     public void initModules(Environment environment) {
         UserModule.getInstance().init(environment);
         ProductModule.getInstance().init(environment);
+        TagModule.getInstance().init(environment);
     }
 
     public void runSeeders() {
