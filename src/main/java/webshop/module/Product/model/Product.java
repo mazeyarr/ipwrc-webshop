@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import webshop.core.iinterface.MyEntity;
+import webshop.core.service.CoreHelper;
 import webshop.module.User.model.Company;
 import webshop.module.User.model.User;
 
@@ -115,6 +116,11 @@ public class Product implements MyEntity {
 
     public Set<ProductDiscount> getProductDiscounts() {
         return productDiscounts;
+    }
+
+
+    public boolean hasDiscounts() {
+        return !CoreHelper.isNull(getProductDiscounts());
     }
 
     public void setProductDiscounts(Set<ProductDiscount> productDiscounts) {

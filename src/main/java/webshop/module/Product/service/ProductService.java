@@ -15,7 +15,11 @@ public class ProductService {
     public static Product createProduct(Product product) {
         getDao().create(product);
 
-        if (product.getProductDiscounts().size() > CoreValue.EMPTY) {
+        if (
+            product.hasDiscounts()
+            &&
+            product.getProductDiscounts().size() > CoreValue.EMPTY
+        ) {
             product.getProductDiscounts().forEach(productDiscount -> {
                 productDiscount.setProduct(product);
                 if (productDiscount.getId() == CoreValue.UNSET_0) {
@@ -66,7 +70,7 @@ public class ProductService {
     }
 
     public static Product tagProduct(long id, String tagName) {
-        return new Product();
+        return new Product(); // TODO
     }
 
     public static boolean deleteProductById(long id) throws ProductNotFoundException {
