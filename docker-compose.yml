@@ -1,0 +1,54 @@
+version: '3'
+services:
+  ipwrc_db:
+    image: 'mysql:5.7'
+    restart: always
+    container_name: ipwrc_mysql
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - './data/db:/var/lib/mysql'
+    networks:
+      - ipwrc-ntw
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=ipwrc-webshop
+      - MYSQL_USER=app
+      - MYSQL_PASSWORD=app
+
+  ipwrc_nginx:
+    image: nginx
+    container_name: ipwrc_nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "8080:80"
+      - "443:443"
+    networks:
+      - ipwrc-ntw
+    depends_on:
+      - ipwrc_app
+
+  ipwrc_app:
+    image: openjdk:8-jre
+    container_name: ipwrc_app
+    volumes:
+      - ./config.yml:/data/ipwrc-dropwizard/config.yml
+      - ./src/main/resources/.env:/data/ipwrc-dropwizard/src/main/resources/.env
+      - ./target/ipwrc-webshop-1.jar:/data/ipwrc-dropwizard/ipwrc-webshop-1.jar
+    working_dir: /data/ipwrc-dropwizard
+    command: ["java","-jar","ipwrc-webshop-1.jar","server","config.yml"]
+    ports:
+      - "8090:8080"
+      - "8091:8081"
+    networks:
+      - ipwrc-ntw
+    depends_on:
+      - ipwrc_db
+
+networks:
+  ipwrc-ntw:
+    external:
+      name: ipwrc-ntw

@@ -10,6 +10,7 @@ import webshop.core.iinterface.UploadPaths;
 import webshop.module.Product.ProductModule;
 import webshop.module.Tag.TagModule;
 import webshop.module.User.UserModule;
+import webshop.resources.WebshopResource;
 import webshop.type.EnvironmentType;
 
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ public class CoreService extends CoreHelper {
     }
 
     public void initModules(Environment environment) {
+        environment.jersey().register(new WebshopResource());
+
         UserModule.getInstance().init(environment);
         ProductModule.getInstance().init(environment);
         TagModule.getInstance().init(environment);
