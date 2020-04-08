@@ -1,11 +1,11 @@
 server:
   applicationConnectors:
     - type: http
-      port: 8000
+      port: 8080
   adminContextPath: /admin
   adminConnectors:
     - type: http
-      port: 8001
+      port: 8081
   rootPath: /api/*
 
 database:
@@ -13,13 +13,13 @@ database:
   driverClass: com.mysql.jdbc.Driver
 
   # the username
-  user: root
+  user: app
 
   # the password
-  password: password
+  password: app
 
   # the JDBC URL
-  url: jdbc:mysql://localhost:3306/ipwrc-webshop
+  url: jdbc:mysql://ipwrc_db:3306/ipwrc-webshop
 
   # the maximum amount of time to wait on an empty pool before throwing an exception
   maxWaitForConnection: 1s

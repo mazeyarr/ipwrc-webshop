@@ -24,7 +24,7 @@ import javax.ws.rs.core.Response;
 import java.util.Date;
 import java.util.List;
 
-@Path("/products")
+@Path("products")
 @Produces(MediaType.APPLICATION_JSON)
 public class ProductResource {
     @GET
@@ -43,7 +43,6 @@ public class ProductResource {
     }
 
     @GET
-    @Path("/")
     @UnitOfWork
     @AuthBinding
     public List<Product> getProductAll() {
@@ -51,7 +50,6 @@ public class ProductResource {
     }
 
     @POST
-    @Path("/")
     @AuthBinding
     @UnitOfWork
     public Response createProduct(@BeanParam ProductInput productInput) {
@@ -77,7 +75,7 @@ public class ProductResource {
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("/{id}/tag")
     @UnitOfWork
     @AuthBinding
     public Response tagProduct(@PathParam("id") long id, @BeanParam ProductTagInput productTagInput) {

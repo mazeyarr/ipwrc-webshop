@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/companies")
+@Path("companies")
 @Produces(MediaType.APPLICATION_JSON)
 public class CompanyResource {
     @GET
@@ -33,7 +33,6 @@ public class CompanyResource {
     }
 
     @GET
-    @Path("/")
     @UnitOfWork
     @AuthBinding
     public List<Company> getCompanyAll() {
@@ -41,7 +40,6 @@ public class CompanyResource {
     }
 
     @POST
-    @Path("/")
     @UnitOfWork
     public Company createCompany(@BeanParam CompanyInput companyInput) {
         return UserService.createCompany(companyInput.toCompany());

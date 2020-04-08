@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response;
 import java.util.Date;
 import java.util.List;
 
-@Path("/tags")
+@Path("tags")
 @Produces(MediaType.APPLICATION_JSON)
 public class TagResource {
     @GET
@@ -40,7 +40,6 @@ public class TagResource {
     }
 
     @GET
-    @Path("/")
     @UnitOfWork
     @AuthBinding
     public List<Tag> getTagAll() {
@@ -48,7 +47,6 @@ public class TagResource {
     }
 
     @POST
-    @Path("/")
     @AuthBinding
     @UnitOfWork
     public Response createTag(@BeanParam TagInput tagInput) {

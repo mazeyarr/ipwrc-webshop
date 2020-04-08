@@ -18,7 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/users")
+@Path("users")
 @Produces(MediaType.APPLICATION_JSON)
 public class UserResource {
     @GET
@@ -37,7 +37,6 @@ public class UserResource {
     }
 
     @GET
-    @Path("/")
     @UnitOfWork
     @AuthBinding
     public List<User> getUserAll() {
@@ -45,7 +44,6 @@ public class UserResource {
     }
 
     @POST
-    @Path("/")
     @UnitOfWork
     public User createUser(@BeanParam UserInput userInput) {
         return UserService.createUser(userInput.toUser(), userInput.getRole());
