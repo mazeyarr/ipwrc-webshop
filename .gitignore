@@ -25,3 +25,5 @@ target/
 target/ipwrc-webshop-1.jar
 classes/
 generated-sources/
+
+data
