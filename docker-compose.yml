@@ -39,10 +39,13 @@ services:
       - ./src/main/resources/.env:/data/ipwrc-dropwizard/src/main/resources/.env
       - ./target/ipwrc-webshop-1.jar:/data/ipwrc-dropwizard/ipwrc-webshop-1.jar
     working_dir: /data/ipwrc-dropwizard
-    command: ["java","-jar", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8080","ipwrc-webshop-1.jar","server","config.yml"]
+    command: ["java","-jar", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=50505","ipwrc-webshop-1.jar","server","config.yml"]
+    expose:
+      - "50505"
     ports:
       - "8090:8080"
       - "8091:8081"
+      - "50505:50505"
     networks:
       - ipwrc-ntw
     depends_on:
